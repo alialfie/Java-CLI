@@ -10,6 +10,7 @@ public class Parser {
 		cmd = "";
 		args = new ArrayList<String>();
 		
+		// must find a way to add a maximum number of arguments
 		validCommands = new ArrayList<Pair<String, Integer>>() {
 			{
 				add(new Pair("cd", 0));
@@ -57,6 +58,7 @@ public class Parser {
 		return validateCommand();
 	}
 	
+	//change later after being able to set a max and min argument limit to validate
 	private boolean validateCommand() {
 		Iterator<Pair<String, Integer>> iterator = validCommands.iterator();
 		Pair<String, Integer> current;
