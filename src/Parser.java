@@ -14,6 +14,19 @@ public class Parser {
 			{
 				add(new Pair("cd", 0));
 				add(new Pair("cp", 2));
+				add(new Pair("clear", 0));
+				add(new Pair("ls", 0));
+				add(new Pair("pwd", 0));
+				add(new Pair("mv", 2));
+				add(new Pair("rm", 1));
+				add(new Pair("mkdir", 1));
+				add(new Pair("rmdir", 1));
+				add(new Pair("cat", 2));
+				add(new Pair("date", 0));
+				add(new Pair("more", 2));
+				add(new Pair("help", 0));
+				add(new Pair("args", 1));
+				// | ,> , >>
 			}
 		};
 	}
