@@ -20,18 +20,20 @@ public class Parser {
 
 	public boolean parse(String input) {
 		int length = input.length(), i = 0;
-		while(input.charAt(i) != ' ' && i < length) {	//gets the command line
+		while(input.charAt(i) != ' ' && length != 0) {	//gets the command line
 			cmd += input.charAt(i);
 			i++;
+			if(i >= length) break;	//in case the index is out of range
 		}
 		
 		i++;	//skip the space
 		
 		while(i < length) {		//gets the arguments
 			String arg = "";
-			while(input.charAt(i) != ' ' && i < length) {
+			while(input.charAt(i) != ' ') {
 				arg += input.charAt(i);
 				i++;
+				if(i >= length) break;	//in case the index is out of range
 			}
 			args.add(arg);
 			i++;	//skip the space
