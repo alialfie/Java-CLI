@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class Parser {
 	String cmd;
 	ArrayList args;
+	int x=0;
 	
 	public Parser() {
 		cmd = "";
