@@ -24,7 +24,7 @@ public class Parser {
 				add(new Pair("rmdir", 1));
 				add(new Pair("cat", 2));
 				add(new Pair("date", 0));
-				add(new Pair("more", 2));
+				add(new Pair("more", 1));
 				add(new Pair("help", 0));
 				add(new Pair("args", 1));
 				// | ,> , >>
