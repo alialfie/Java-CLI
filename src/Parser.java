@@ -3,8 +3,8 @@ import javafx.util.Pair;
 
 public class Parser {
 	String cmd;
-	ArrayList args;
-	ArrayList validCommands;
+	ArrayList<String> args;
+	ArrayList<Pair<String, Integer>> validCommands;
 	
 	public Parser() {
 		cmd = "";
@@ -12,8 +12,8 @@ public class Parser {
 		
 		validCommands = new ArrayList<Pair<String, Integer>>() {
 			{
-				add(new Pair("cd", 0));
-				add(new Pair("cp", 2));
+				add(new Pair<String, Integer>("cd", 0));
+				add(new Pair<String, Integer>("cp", 2));
 			}
 		};
 	}
@@ -64,7 +64,7 @@ public class Parser {
 		return cmd;
 	}
 
-	public ArrayList getArgs() {
+	public ArrayList<String> getArgs() {
 		return args;
 	}
 	

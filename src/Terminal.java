@@ -1,4 +1,9 @@
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 
 public class Terminal {
 	String defaultDir;
@@ -34,5 +39,80 @@ public class Terminal {
 	
 	public void pwd() {
 		System.out.println(path);
+	}
+	
+	public void rmdir(ArrayList<String> args) {
+		String currentPath;
+		File file;
+		for(int i=0; i<args.size(); i++) {
+			currentPath = this.path + args.get(i);
+			file = new File(currentPath);
+			if(file.isDirectory() && file.list().length==0) {
+				 file.delete();
+			}
+		}
+	}
+	
+	public void mv(ArrayList<String> args) {
+		String destination = this.path + args.get(args.size()-1);
+		File destFile = new File(destination);
+		if(destFile.isDirectory()) {
+			String currentPath;
+			File currentFile;
+			for(int i=0; i<args.size()-1; i++) {
+				currentPath = this.path + args.get(i);
+				currentFile = new File(currentPath);
+				if(currentFile.exists()) {
+					try {
+						Files.move(Paths.get(currentPath), 
+								Paths.get(destination + "/" + currentFile.getName()), 
+								StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+					    //moving file failed.
+					    e.printStackTrace();
+					}
+				}
+			}
+		}else if(destFile.isFile()) {
+			String currentPath;
+			File currentFile;
+			for(int i=0; i<args.size()-1; i++) {
+				currentPath = this.path + args.get(i);
+				currentFile = new File(currentPath);
+				if(currentFile.isFile()) {
+					try {
+						Files.move(Paths.get(currentPath), 
+								Paths.get(destination), 
+								StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+					    //moving file failed.
+					    e.printStackTrace();
+					}
+				}else {
+					System.out.println(currentPath + " is not a file while destination is a file");
+				}
+			}
+		}else {		//file doesn't exist
+			String currentPath;
+			File currentFile;
+			for(int i=0; i<args.size()-1; i++) {
+				currentPath = this.path + args.get(i);
+				currentFile = new File(currentPath);
+				
+				String extension = "";
+				int x = currentPath.lastIndexOf('.');
+				if (x >= 0) {
+				    extension = currentPath.substring(x+1);
+				}
+				
+				if(currentFile.exists()) {
+					if(extension.length() == 0) {
+						currentFile.renameTo(destFile);
+					}else {
+						currentFile.renameTo(new File(destination + "." + extension));
+					}
+				}
+			}
+		}
 	}
 }
