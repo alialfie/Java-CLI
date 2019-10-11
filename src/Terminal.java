@@ -25,10 +25,6 @@ public class Terminal {
 		System.out.println(aDate.format(date));
 		}
 	
-	//public void pwd() {
-	//	String currentDir = System.getProperty("user.dir");
-	//	System.out.println(currentDir);
-	//}
 	
 	public void cd(String path) {
 		String backupPath = this.path;
@@ -55,14 +51,21 @@ public class Terminal {
 	
 	
 	public void mkdir(String dirName) {
-		boolean exists =  new File(dirName).mkdir();    
+		boolean exists =  new File(path + dirName).mkdir();    
 	        if(!exists)
 	            System.out.println("a folder with that name already exists!");		
 		
 	}
 	
 	public void ls() {
-		
+		String[] files;
+		File file = new File (path);
+		files = file.list();
+		Arrays.sort(files,String.CASE_INSENSITIVE_ORDER);
+		for (String filenames : files) {
+			System.out.println(filenames);
+		}
+
 	}
 	
 
