@@ -39,8 +39,6 @@ public class Parser {
 			i++;	//skip the space
 		}
 		
-		System.out.println(validateCommand());
-		
 		return validateCommand();
 	}
 	
