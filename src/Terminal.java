@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,7 +45,23 @@ public class Terminal {
 				case "rmdir":
 					rmdir(parser.getArgs());
 					break;
-					
+				
+				case "ls":
+					ls();
+					break;	
+				
+				case "mkdir":
+					mkdir(parser.getArgs());
+					break;
+				
+				case "date":
+					date();
+					break;
+				
+				case "cat":
+					cat(parser.getArgs());
+					break;
+				
 				case "mv":
 					mv(parser.getArgs());
 					break;
@@ -171,13 +188,19 @@ public class Terminal {
 		System.out.println(aDate.format(date));
 		}
 	
-	public void mkdir(String dirName) {
-		boolean exists =  new File(path + dirName).mkdir();    
-	        if(!exists)
-	            System.out.println("a folder with that name already exists!");		
+	public void mkdir(ArrayList<String> args) {
+		String currentPath;
+		File file; 
+		for(int i=0; i<args.size(); i++) {
+			currentPath = this.path + args.get(i);
+			file = new File(currentPath);
+	        if(!file.mkdir()) {
+	            System.out.println("a folder with that name already exists!");	
+	        	}		
+	        }
 		
 	}
-	
+
 	public void ls() {
 		String[] files;
 		File file = new File (path);
@@ -190,5 +213,18 @@ public class Terminal {
 	}
 	
 	
+	public void cat(ArrayList<String> args) {
+		for (int i=0; i<args.size(); i++) {
+		try {
+			Scanner freader = new Scanner(new File(this.path + args.get(i)));
+			while (freader.hasNext()) {
+				String fdata = freader.next();
+				System.out.println(fdata);
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("file not found");
+		}
+		}
+	}
 	
 }

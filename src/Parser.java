@@ -14,7 +14,11 @@ public class Parser {
 				add(new Command("cd", 0, 1));
 				add(new Command("mv", 2, -1));
 				add(new Command("rmdir", 1, -1));
+				add(new Command("mkdir", 1, -1));
 				add(new Command("pwd", 0, 0));
+				add(new Command("date", 0, 0));
+				add(new Command("ls", 0, 0));
+				add(new Command("cat", 1, -1));
 				add(new Command("exit", 0, 0));
 			}
 		};
