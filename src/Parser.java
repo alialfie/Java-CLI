@@ -1,38 +1,29 @@
 import java.util.*;
-import javafx.util.Pair;
 
 public class Parser {
 	String cmd;
-	ArrayList args;
-	ArrayList validCommands;
+	ArrayList<String> args;
+	ArrayList<Command> validCommands;
 	
 	public Parser() {
 		cmd = "";
 		args = new ArrayList<String>();
 		
-		// must find a way to add a maximum number of arguments
-		validCommands = new ArrayList<Pair<String, Integer>>() {
+		validCommands = new ArrayList<Command>() {
 			{
-				add(new Pair("cd", 0));
-				add(new Pair("cp", 2));
-				add(new Pair("clear", 0));
-				add(new Pair("ls", 0));
-				add(new Pair("pwd", 0));
-				add(new Pair("mv", 2));
-				add(new Pair("rm", 1));
-				add(new Pair("mkdir", 1));
-				add(new Pair("rmdir", 1));
-				add(new Pair("cat", 2));
-				add(new Pair("date", 0));
-				add(new Pair("more", 1));
-				add(new Pair("help", 0));
-				add(new Pair("args", 1));
-				// | ,> , >>
+				add(new Command("cd", 0, 1));
+				add(new Command("mv", 2, -1));
+				add(new Command("rmdir", 1, -1));
+				add(new Command("pwd", 0, 0));
+				add(new Command("exit", 0, 0));
 			}
 		};
 	}
 
 	public boolean parse(String input) {
+		cmd = "";
+		args = new ArrayList<String>();
+		
 		int length = input.length(), i = 0;
 		while(input.charAt(i) != ' ' && length != 0) {	//gets the command line
 			cmd += input.charAt(i);
@@ -53,23 +44,17 @@ public class Parser {
 			i++;	//skip the space
 		}
 		
-		System.out.println(validateCommand());
-		
 		return validateCommand();
 	}
 	
-	//change later after being able to set a max and min argument limit to validate
 	private boolean validateCommand() {
-		Iterator<Pair<String, Integer>> iterator = validCommands.iterator();
-		Pair<String, Integer> current;
+		Iterator<Command> iterator = validCommands.iterator();
+		Command current;
 		while(iterator.hasNext()) {
 			current = iterator.next();
-			if(current.getKey().equals(cmd)) {
-				if(args.size() >= (Integer)current.getValue()) {
-					return true;
-				}else {
-					return false;
-				}
+			if(current.getName().equals(cmd) && 
+					((!(current.getMinArgs() < args.size())) || (current.getMaxArgs() == -1) || (!(current.getMaxArgs() > args.size()))) ) {
+				return true;
 			}
 		}
 		return false;
@@ -79,7 +64,7 @@ public class Parser {
 		return cmd;
 	}
 
-	public ArrayList getArgs() {
+	public ArrayList<String> getArgs() {
 		return args;
 	}
 	
