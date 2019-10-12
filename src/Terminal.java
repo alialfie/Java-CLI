@@ -13,7 +13,6 @@ public class Terminal {
 	public Terminal() {
 		defaultDir = "C:/";
 		path = defaultDir;
-		start();
 	}
 	
 	public void start() {
@@ -48,6 +47,7 @@ public class Terminal {
 					break;
 					
 				case "exit":
+					sc.close();
 					return;
 				}
 				

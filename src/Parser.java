@@ -1,5 +1,4 @@
 import java.util.*;
-import javafx.util.Pair;
 
 public class Parser {
 	String cmd;
