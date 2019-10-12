@@ -22,7 +22,6 @@ public class Terminal {
 		String cmdLine;
 		String cmd;
 		while(true) {
-			System.out.println(path);
 			cmdLine = sc.nextLine();
 			if(parser.parse(cmdLine)) {
 				cmd = parser.getCmd();

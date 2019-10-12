@@ -53,11 +53,6 @@ public class Parser {
 		Command current;
 		while(iterator.hasNext()) {
 			current = iterator.next();
-//			System.out.println(args);
-//			System.out.println(current.getName().equals(cmd));
-//			System.out.println(!(current.getMinArgs() < args.size()));
-//			System.out.println(current.getMaxArgs() == -1);
-//			System.out.println(!(current.getMaxArgs() > args.size()));
 			if(current.getName().equals(cmd) && 
 					((!(current.getMinArgs() < args.size())) || (current.getMaxArgs() == -1) || (!(current.getMaxArgs() > args.size()))) ) {
 				return true;
