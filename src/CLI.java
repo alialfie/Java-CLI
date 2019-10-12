@@ -2,9 +2,8 @@ import java.util.Scanner;
 
 public class CLI {
 	public static void main(String[] args) {
-		//Parser parser = new Parser();
+		
 		Terminal T = new Terminal();
-		//parser.parse("clear");
 		Scanner kb = new Scanner(System.in);
 		
 		T.cd("E://");
