@@ -4,21 +4,27 @@ import javafx.util.Pair;
 public class Parser {
 	String cmd;
 	ArrayList<String> args;
-	ArrayList<Pair<String, Integer>> validCommands;
+	ArrayList<Command> validCommands;
 	
 	public Parser() {
 		cmd = "";
 		args = new ArrayList<String>();
 		
-		validCommands = new ArrayList<Pair<String, Integer>>() {
+		validCommands = new ArrayList<Command>() {
 			{
-				add(new Pair<String, Integer>("cd", 0));
-				add(new Pair<String, Integer>("cp", 2));
+				add(new Command("cd", 0, 1));
+				add(new Command("mv", 2, -1));
+				add(new Command("rmdir", 1, -1));
+				add(new Command("pwd", 0, 0));
+				add(new Command("exit", 0, 0));
 			}
 		};
 	}
 
 	public boolean parse(String input) {
+		cmd = "";
+		args = new ArrayList<String>();
+		
 		int length = input.length(), i = 0;
 		while(input.charAt(i) != ' ' && length != 0) {	//gets the command line
 			cmd += input.charAt(i);
@@ -39,22 +45,22 @@ public class Parser {
 			i++;	//skip the space
 		}
 		
-		System.out.println(validateCommand());
-		
 		return validateCommand();
 	}
 	
 	private boolean validateCommand() {
-		Iterator<Pair<String, Integer>> iterator = validCommands.iterator();
-		Pair<String, Integer> current;
+		Iterator<Command> iterator = validCommands.iterator();
+		Command current;
 		while(iterator.hasNext()) {
 			current = iterator.next();
-			if(current.getKey().equals(cmd)) {
-				if(args.size() >= (Integer)current.getValue()) {
-					return true;
-				}else {
-					return false;
-				}
+//			System.out.println(args);
+//			System.out.println(current.getName().equals(cmd));
+//			System.out.println(!(current.getMinArgs() < args.size()));
+//			System.out.println(current.getMaxArgs() == -1);
+//			System.out.println(!(current.getMaxArgs() > args.size()));
+			if(current.getName().equals(cmd) && 
+					((!(current.getMinArgs() < args.size())) || (current.getMaxArgs() == -1) || (!(current.getMaxArgs() > args.size()))) ) {
+				return true;
 			}
 		}
 		return false;

@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Terminal {
 	String defaultDir;
@@ -12,13 +13,56 @@ public class Terminal {
 	public Terminal() {
 		defaultDir = "C:/";
 		path = defaultDir;
+		start();
+	}
+	
+	public void start() {
+		Scanner sc = new Scanner(System.in);
+		Parser parser = new Parser();
+		String cmdLine;
+		String cmd;
+		while(true) {
+			System.out.println(path);
+			cmdLine = sc.nextLine();
+			if(parser.parse(cmdLine)) {
+				cmd = parser.getCmd();
+				
+				switch(cmd) {
+				case "cd":
+					if(parser.getArgs().size() != 0) {
+						cd(parser.getArgs().get(0));
+					}else {
+						cd("");
+					}
+					break;
+					
+				case "pwd":
+					pwd();
+					break;
+					
+				case "rmdir":
+					rmdir(parser.getArgs());
+					break;
+					
+				case "mv":
+					mv(parser.getArgs());
+					break;
+					
+				case "exit":
+					return;
+				}
+				
+			}else {
+				System.out.println("invalid command or arguments");
+			}
+		}
 	}
 	
 	public void cd(String path) {
 		String backupPath = this.path;
 		if(path.equals("")) {
 			this.path = this.defaultDir;
-		}else if(path.charAt(1) == ':') {
+		}else if(path.length() >= 3 && path.charAt(1) == ':') {
 			this.path = path;
 		}else if(path.charAt(0) != '/') {
 			this.path = this.path + path;
