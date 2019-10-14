@@ -62,6 +62,14 @@ public class Terminal {
 					cat(parser.getArgs());
 					break;
 				
+				case "help":
+					help();
+					break;
+					
+				case "cp":
+					cp(parser.getArgs());
+					break;
+				
 				case "mv":
 					mv(parser.getArgs());
 					break;
@@ -106,14 +114,22 @@ public class Terminal {
 	
 	public void rmdir(ArrayList<String> args) {
 		String currentPath;
-		File file;
 		for(int i=0; i<args.size(); i++) {
+			File fp = new File (args.get(i));
+			if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
 			currentPath = this.path + args.get(i);
-			file = new File(currentPath);
-			if(file.isDirectory() && file.list().length==0) {
-				 file.delete();
 			}
-		}
+			else {
+				currentPath = args.get(i);
+			}
+			fp = new File(currentPath);
+	        if(fp.isDirectory()) {
+	            fp.delete();	
+	        	}	
+	        else {
+	        	System.out.println("directory does not exist");
+	        }
+	   }
 	}
 	
 	public void mv(ArrayList<String> args) {
@@ -190,11 +206,16 @@ public class Terminal {
 	
 	public void mkdir(ArrayList<String> args) {
 		String currentPath;
-		File file; 
 		for(int i=0; i<args.size(); i++) {
+			File fp = new File (args.get(i));
+			if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
 			currentPath = this.path + args.get(i);
-			file = new File(currentPath);
-	        if(!file.mkdir()) {
+			}
+			else {
+				currentPath = args.get(i);
+			}
+			fp = new File(currentPath);
+	        if(!fp.mkdir()) {
 	            System.out.println("a folder with that name already exists!");	
 	        	}		
 	        }
@@ -221,10 +242,33 @@ public class Terminal {
 				String fdata = freader.next();
 				System.out.println(fdata);
 			}
+			freader.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("file not found");
 		}
 		}
 	}
 	
-}
+	
+	public void cp(ArrayList<String> args) {
+		
+	}
+	
+	public void help() {
+		System.out.println("cd: This command changes the current directory to another one. arguments: directoryname");
+		System.out.println("ls: list names of all files and directories in the current working directory");
+		System.out.println("cp: copies a file's contents into a new file that has been created by it or copies files into a certain directory. arguments: filename filename or filename filename directoryname");
+		System.out.println("cat: concatenates files and outputs their content to the console/anotherfile. arguments: filename(s)");
+		System.out.println("more: lets us display the output line by line or page by page. arguments: filename");
+		System.out.println("mkdir: makes directories of given names in current directory or in a specified path. arguments: directoryname(s) or path(s)/dirname(s)");
+		System.out.println("rmdir: removes directories of given names in current directory or in a specified path. arguments: directoryname(s) or path(s)/dirname(s)");
+		System.out.println("mv: moves each given file into a the last given file with the same name in a specified directory. arguments: filenames/paths");
+		System.out.println("rm: removes each specified file. arrguments: filename(s)");
+		System.out.println("args: list all command arguments");
+		System.out.println("date: current date/time");
+		System.out.println("pwd: shows current working directory");
+		System.out.println("clear: clears the current terminal screen ");
+		System.out.println("exit: Stop all");
+	}
+	
+} 

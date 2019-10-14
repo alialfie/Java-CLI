@@ -19,6 +19,8 @@ public class Parser {
 				add(new Command("date", 0, 0));
 				add(new Command("ls", 0, 0));
 				add(new Command("cat", 1, -1));
+				add(new Command("cp", 2, 3));
+				add(new Command("help", 0, 0));
 				add(new Command("exit", 0, 0));
 			}
 		};
