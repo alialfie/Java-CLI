@@ -25,7 +25,7 @@ public class Parser {
 		args = new ArrayList<String>();
 		
 		int length = input.length(), i = 0;
-		while(input.charAt(i) != ' ' && length != 0) {	//gets the command line
+		while(length != 0 && input.charAt(i) != ' ') {	//gets the command line
 			cmd += input.charAt(i);
 			i++;
 			if(i >= length) break;	//in case the index is out of range
@@ -44,6 +44,8 @@ public class Parser {
 			i++;	//skip the space
 		}
 		
+		transformArgs();
+		
 		return validateCommand();
 	}
 	
@@ -52,12 +54,42 @@ public class Parser {
 		Command current;
 		while(iterator.hasNext()) {
 			current = iterator.next();
-			if(current.getName().equals(cmd) && 
-					((!(current.getMinArgs() < args.size())) || (current.getMaxArgs() == -1) || (!(current.getMaxArgs() > args.size()))) ) {
+			if(current.getName().equals(cmd) && (current.getMinArgs() <= args.size()) && 
+					((current.getMaxArgs() == -1) || (current.getMaxArgs() >= args.size())) ) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	private void transformArgs() {		//handles the double quoted args
+		ArrayList<String> newArgs = new ArrayList<String>();
+		Iterator<String> iterator = args.iterator();
+		String arg, next;
+		while(iterator.hasNext()) {
+			arg = "";
+			arg = iterator.next();
+			if(arg.charAt(0) == '"') {
+				arg = arg.replace("\"", "");
+				while(iterator.hasNext()) {
+					next = iterator.next();
+					if(next.charAt(next.length()-1) == '"') {
+						next = next.replace("\"", "");
+						arg  = arg + " " + next;
+						break;
+					}else {
+						arg  = arg + " " + next;
+					}
+				}
+				newArgs.add(arg);
+			}else {
+				newArgs.add(arg);
+			}
+		}
+		
+		args = newArgs;
+		
+		System.out.println(args);
 	}
 
 	public String getCmd() {
