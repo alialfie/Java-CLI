@@ -88,8 +88,6 @@ public class Parser {
 		}
 		
 		args = newArgs;
-		
-		System.out.println(args);
 	}
 
 	public String getCmd() {
