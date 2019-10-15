@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
+import org.apache.commons.io.FileUtils;
 
 public class Terminal {
 	String defaultDir;
@@ -260,21 +261,83 @@ public class Terminal {
 	
 	public void cp(ArrayList<String> args) {
 		String currentPath;
+		//could be changed to copy any number of files into a directory
 		if (args.size() == 3) {
+			//checking if the last argument is a directory.
 			File fp = new File (args.get(2));
+			
 			if (!args.get(2).equalsIgnoreCase(fp.getAbsolutePath())) {
 			currentPath = this.path + args.get(2);
 			}
 			else {
 				currentPath = args.get(2);
 			}
+			
+			fp = new File(currentPath);
+			
 			if (!fp.isDirectory()) {
 				System.out.println("there is no directory with the given name");
 			}
+			
 			else {
-				System.out.println("there a directory with the given name");
+				ArrayList[] files;
+				
+				for(int i=0 ; i<2; i++) {
+					//if else for long and short paths
+					if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
+						currentPath = this.path + args.get(i);
+						}
+						else {
+							currentPath = args.get(i);
+						}
+					
+				File file= new File(currentPath);
+				
+				try {
+					FileUtils.copyFileToDirectory(file, fp);
+				} catch (IOException e) {
+					System.out.println("a file you wrote does not exist");
+				}
+				}
 				
 			}
+		}
+		
+		//copying a file onto another file as written in the command in the lab; can be changed to copy several files into one.
+		else if(args.size() == 2) {
+			//checking if the second path provided is to a file and not a directory
+			File fp=new File(args.get(1));
+			
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+			currentPath = this.path + args.get(1);
+			}
+			else {
+				currentPath = args.get(1);
+			}
+			
+			fp = new File(currentPath);
+			
+			if (!fp.isFile()) {
+				System.out.println("there is no file with the given name");
+			}
+			
+			else {
+				if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+					currentPath = this.path + args.get(0);
+					}
+					else {
+						currentPath = args.get(0);
+					}
+				
+				File file=new File(currentPath);
+				
+				try {
+					FileUtils.copyFile(file, fp);
+				} catch (IOException e) {
+					System.out.println("a file you entered does not exist");
+				}
+			}
+			
 		}
 		
 	}

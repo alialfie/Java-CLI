@@ -59,7 +59,7 @@ public class Parser {
 		while(iterator.hasNext()) {
 			current = iterator.next();
 			if(current.getName().equals(cmd) && 
-					((!(current.getMinArgs() < args.size())) || (current.getMaxArgs() == -1) || (!(current.getMaxArgs() > args.size()))) ) {
+					(current.getMinArgs() < args.size()) && ((current.getMaxArgs() == -1) || (current.getMaxArgs() >= args.size())) ) {
 				return true;
 			}
 		}
