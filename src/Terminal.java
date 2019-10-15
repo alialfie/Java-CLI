@@ -235,9 +235,17 @@ public class Terminal {
 	
 	
 	public void cat(ArrayList<String> args) {
+		String currentPath;
 		for (int i=0; i<args.size(); i++) {
 		try {
-			Scanner freader = new Scanner(new File(this.path + args.get(i)));
+			File fp = new File (args.get(i));
+			if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
+			currentPath = this.path + args.get(i);
+			}
+			else {
+				currentPath = args.get(i);
+			}
+			Scanner freader = new Scanner(new File(currentPath));
 			while (freader.hasNext()) {
 				String fdata = freader.next();
 				System.out.println(fdata);
@@ -251,6 +259,23 @@ public class Terminal {
 	
 	
 	public void cp(ArrayList<String> args) {
+		String currentPath;
+		if (args.size() == 3) {
+			File fp = new File (args.get(2));
+			if (!args.get(2).equalsIgnoreCase(fp.getAbsolutePath())) {
+			currentPath = this.path + args.get(2);
+			}
+			else {
+				currentPath = args.get(2);
+			}
+			if (!fp.isDirectory()) {
+				System.out.println("there is no directory with the given name");
+			}
+			else {
+				System.out.println("there a directory with the given name");
+				
+			}
+		}
 		
 	}
 	
