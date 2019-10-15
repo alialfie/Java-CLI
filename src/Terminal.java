@@ -48,7 +48,7 @@ public class Terminal {
 					break;
 				
 				case "ls":
-					ls();
+					ls(parser.getArgs());
 					break;	
 				
 				case "mkdir":
@@ -223,13 +223,41 @@ public class Terminal {
 		
 	}
 
-	public void ls() {
+	public void ls(ArrayList<String> args) {
+		if (args.size() == 0) {
 		String[] files;
 		File file = new File (path);
 		files = file.list();
 		Arrays.sort(files,String.CASE_INSENSITIVE_ORDER);
 		for (String filenames : files) {
 			System.out.println(filenames);
+			}
+		}
+		else if (args.size()==2 && args.get(0).equalsIgnoreCase("|") && args.get(1).equalsIgnoreCase("more")) {
+			Scanner kb = new Scanner (System.in);
+			int nOl = 0;
+			int sTop = 10;
+			String sMore;
+			String newline = System.getProperty("line.separator");
+			String[] files;
+			File file = new File (path);
+			files = file.list();
+			Arrays.sort(files,String.CASE_INSENSITIVE_ORDER);
+			for (String filenames : files) {
+				System.out.println(filenames);
+				nOl++;
+				if (nOl == sTop) {
+					System.out.println("\ndo you want to show more data y/n?");
+					sMore = kb.next();
+					if(sMore.matches("y")){
+						sTop+=10;
+						continue;
+					}
+					else if(sMore.matches("n")) {
+						break;
+					}
+				}
+				}
 		}
 
 	}
@@ -279,12 +307,10 @@ public class Terminal {
 				System.out.println("there is no directory with the given name");
 			}
 			
-			else {
-				ArrayList[] files;
-				
+			else {	
 				for(int i=0 ; i<2; i++) {
 					//if else for long and short paths
-					if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
+					if (!args.get(2).equalsIgnoreCase(fp.getAbsolutePath())) {
 						currentPath = this.path + args.get(i);
 						}
 						else {
