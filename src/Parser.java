@@ -20,8 +20,10 @@ public class Parser {
 				add(new Command("ls", 0, 2));
 				add(new Command("cat", 1, -1));
 				add(new Command("cp", 2, -1));
+				add(new Command("rm", 1, 1));
 				add(new Command("help", 0, 0));
 				add(new Command("exit", 0, 0));
+				add(new Command("more",1, 2));
 			}
 		};
 	}

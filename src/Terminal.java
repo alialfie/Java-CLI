@@ -1,10 +1,7 @@
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.CharBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -23,435 +20,531 @@ public class Terminal {
 		defaultDir = "C:/";
 		path = defaultDir;
 	}
-	
-	public void start() {
+
+	public void start() throws IOException {
 		Scanner sc = new Scanner(System.in);
 		Parser parser = new Parser();
 		String cmdLine;
 		String cmd;
-		while(true) {
+		while (true) {
 			cmdLine = sc.nextLine();
-			if(parser.parse(cmdLine)) {
+			if (parser.parse(cmdLine)) {
 				cmd = parser.getCmd();
-				
-				switch(cmd) {
+
+				switch (cmd) {
 				case "cd":
-					if(parser.getArgs().size() != 0) {
+					if (parser.getArgs().size() != 0) {
 						cd((String) parser.getArgs().get(0));
-					}else {
+					} else {
 						cd("");
 					}
 					break;
-					
+
 				case "pwd":
-					pwd();
+					pwd(parser.getArgs());
 					break;
-					
+
 				case "rmdir":
 					rmdir(parser.getArgs());
 					break;
-				
+
 				case "ls":
 					ls(parser.getArgs());
-					break;	
-				
+					break;
+
 				case "mkdir":
 					mkdir(parser.getArgs());
 					break;
-				
-				case "date":
-					date();
+				case "rm":
+					rm(parser.getArgs());
 					break;
-				
+
+				case "date":
+					date(parser.getArgs());
+					break;
+
 				case "cat":
 					cat(parser.getArgs());
 					break;
-				
+
 				case "help":
-					help();
+					help(parser.getArgs());
 					break;
-					
+
 				case "cp":
 					cp(parser.getArgs());
 					break;
-				
 				case "mv":
 					mv(parser.getArgs());
 					break;
-					
+				case "more":
+					more(parser.getArgs());
+					break;
 				case "exit":
 					sc.close();
 					return;
 				}
-				
-			}else {
+
+			} else {
 				System.out.println("invalid command or arguments");
 			}
 		}
 	}
-	
+
 	public void cd(String path) {
 		String backupPath = this.path;
-		if(path.equals("")) {
+		if (path.equals("")) {
 			this.path = this.defaultDir;
-		}else if(path.length() >= 3 && path.charAt(1) == ':') {
+		} else if (path.length() >= 3 && path.charAt(1) == ':') {
 			this.path = path;
-		}else if(path.charAt(0) != '/') {
+		} else if (path.charAt(0) != '/') {
 			this.path = this.path + path;
-		}else if(path.charAt(0) == '/') {
+		} else if (path.charAt(0) == '/') {
 			this.path = "C:" + path;
 		}
-		
-		if(this.path.charAt(this.path.length()-1) != '/') {
+
+		if (this.path.charAt(this.path.length() - 1) != '/') {
 			this.path += "/";
 		}
-		
+
 		File f = new File(this.path);
-		if(!f.isDirectory()) {
+		if (!f.isDirectory()) {
 			System.out.println("invalid directory");
 			this.path = backupPath;
 		}
 	}
-	
-	public void pwd() {
-		System.out.println(path);
+
+	public void pwd(ArrayList<String> args) throws IOException {
+		if (args.isEmpty()) {
+			System.out.println(path);
+			return;
+		} else if (args.get(0).compareTo(">>") == 0) {
+			FileWriter fileWriter = new FileWriter(path + args.get(1), true);
+			fileWriter.write(path);
+		} else {
+			FileWriter fileWriter = new FileWriter(path + args.get(1), false);
+			fileWriter.write(path);
+		}
 	}
-	
+
 	public void rmdir(ArrayList<String> args) {
 		String currentPath;
-		for(int i=0; i<args.size(); i++) {
-			File fp = new File (args.get(i));
+		for (int i = 0; i < args.size(); i++) {
+			File fp = new File(args.get(i));
 			if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
-			currentPath = this.path + args.get(i);
-			}
-			else {
+				currentPath = this.path + args.get(i);
+			} else {
 				currentPath = args.get(i);
 			}
 			fp = new File(currentPath);
-	        if(fp.isDirectory()) {
-	            fp.delete();	
-	        	}	
-	        else {
-	        	System.out.println("directory does not exist");
-	        }
-	   }
+			if (fp.isDirectory()) {
+				fp.delete();
+			} else {
+				System.out.println("directory does not exist");
+			}
+		}
 	}
-	
+
 	public void mv(ArrayList<String> args) {
-		String destination = this.path + args.get(args.size()-1);
+		String destination = this.path + args.get(args.size() - 1);
 		File destFile = new File(destination);
-		if(destFile.isDirectory()) {
+		if (destFile.isDirectory()) {
 			String currentPath;
 			File currentFile;
-			for(int i=0; i<args.size()-1; i++) {
+			for (int i = 0; i < args.size() - 1; i++) {
 				currentPath = this.path + args.get(i);
 				currentFile = new File(currentPath);
-				if(currentFile.exists()) {
+				if (currentFile.exists()) {
 					try {
-						Files.move(Paths.get(currentPath), 
-								Paths.get(destination + "/" + currentFile.getName()), 
+						Files.move(Paths.get(currentPath), Paths.get(destination + "/" + currentFile.getName()),
 								StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
-					    //moving file failed.
-					    e.printStackTrace();
+						// moving file failed.
+						e.printStackTrace();
 					}
 				}
 			}
-		}else if(destFile.isFile()) {
+		} else if (destFile.isFile()) {
 			String currentPath;
 			File currentFile;
-			for(int i=0; i<args.size()-1; i++) {
+			for (int i = 0; i < args.size() - 1; i++) {
 				currentPath = this.path + args.get(i);
 				currentFile = new File(currentPath);
-				if(currentFile.isFile()) {
+				if (currentFile.isFile()) {
 					try {
-						Files.move(Paths.get(currentPath), 
-								Paths.get(destination), 
-								StandardCopyOption.REPLACE_EXISTING);
+						Files.move(Paths.get(currentPath), Paths.get(destination), StandardCopyOption.REPLACE_EXISTING);
 					} catch (IOException e) {
-					    //moving file failed.
-					    e.printStackTrace();
+						// moving file failed.
+						e.printStackTrace();
 					}
-				}else {
+				} else {
 					System.out.println(currentPath + " is not a file while destination is a file");
 				}
 			}
-		}else {		//file doesn't exist
+		} else { // file doesn't exist
 			String currentPath;
 			File currentFile;
-			for(int i=0; i<args.size()-1; i++) {
+			for (int i = 0; i < args.size() - 1; i++) {
 				currentPath = this.path + args.get(i);
 				currentFile = new File(currentPath);
-				
+
 				String extension = "";
 				int x = currentPath.lastIndexOf('.');
 				if (x >= 0) {
-				    extension = currentPath.substring(x+1);
+					extension = currentPath.substring(x + 1);
 				}
-				
-				if(currentFile.exists()) {
-					if(extension.length() == 0) {
+
+				if (currentFile.exists()) {
+					if (extension.length() == 0) {
 						currentFile.renameTo(destFile);
-					}else {
+					} else {
 						currentFile.renameTo(new File(destination + "." + extension));
 					}
 				}
 			}
 		}
 	}
-	
-	public void date() {
+
+	public void date(ArrayList<String> args) throws IOException {
 		Date date = new Date();
 		SimpleDateFormat aDate = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-		
-		System.out.println(aDate.format(date));
-		}
-	
+		if (args.get(0).compareTo(">>") == 0) {
+			FileWriter fileWriter = new FileWriter(path + args.get(1), true);
+			fileWriter.write(aDate.format(date));
+			return;
+		} else if (args.get(0).compareTo(">") == 0) {
+			FileWriter fileWriter = new FileWriter(path + args.get(1), true);
+			fileWriter.write(aDate.format(date));
+			return;
+		} else
+			System.out.println(aDate.format(date));
+	}
+
 	public void mkdir(ArrayList<String> args) {
 		String currentPath;
-		for(int i=0; i<args.size(); i++) {
-			File fp = new File (args.get(i));
+		for (int i = 0; i < args.size(); i++) {
+			File fp = new File(args.get(i));
 			if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
-			currentPath = this.path + args.get(i);
-			}
-			else {
+				currentPath = this.path + args.get(i);
+			} else {
 				currentPath = args.get(i);
 			}
 			fp = new File(currentPath);
-	        if(!fp.mkdir()) {
-	            System.out.println("a folder with that name already exists!");	
-	        	}		
-	        }
-		
-	}
-
-	public void ls(ArrayList<String> args) {
-		if (args.size() == 0) {
-		String[] files;
-		File file = new File (path);
-		files = file.list();
-		Arrays.sort(files,String.CASE_INSENSITIVE_ORDER);
-		for (String filenames : files) {
-			System.out.println(filenames);
+			if (!fp.mkdir()) {
+				System.out.println("a folder with that name already exists!");
 			}
 		}
-		else if(args.get(1).compareTo(">>")==0) {
-			
+
+	}
+
+	public void ls(ArrayList<String> args) throws IOException {
+		if (args.size() == 0) {
+			String[] files;
+			File file = new File(path);
+			files = file.list();
+			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
+			for (String filenames : files) {
+				System.out.println(filenames);
+			}
+			return;
 		}
-		else if (args.size()==2 && args.get(0).equalsIgnoreCase("|") && args.get(1).equalsIgnoreCase("more")) {
-			Scanner kb = new Scanner (System.in);
+		// ***************************************************************************************
+		else if (args.get(0).compareTo(">>") == 0) {
+			String[] files;
+			File file = new File(path);
+			files = file.list();
+			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
+			FileWriter fileWriter = new FileWriter(args.get(1), true);
+			for (String filenames : files) {
+				fileWriter.write(filenames);
+				fileWriter.write("\n");
+			}
+			fileWriter.close();
+		}
+		// **************************************************************************************
+		else if (args.get(0).compareTo(">") == 0) {
+			String[] files;
+			File file = new File(path);
+			files = file.list();
+			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
+			FileWriter fileWriter = new FileWriter(args.get(1), false);
+			for (String filenames : files) {
+				fileWriter.write(filenames);
+				fileWriter.write("\n");
+			}
+			fileWriter.close();
+		}
+		// **************************************************************************************
+		else if (args.size() == 2 && args.get(0).equalsIgnoreCase("|") && args.get(1).equalsIgnoreCase("more")) {
+			Scanner kb = new Scanner(System.in);
 			int nOl = 0;
 			int sTop = 10;
 			String sMore;
 			String newline = System.getProperty("line.separator");
 			String[] files;
-			File file = new File (path);
+			File file = new File(path);
 			files = file.list();
-			Arrays.sort(files,String.CASE_INSENSITIVE_ORDER);
+			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
 			for (String filenames : files) {
 				System.out.println(filenames);
 				nOl++;
 				if (nOl == sTop) {
 					System.out.println("\ndo you want to show more data y/n?");
 					sMore = kb.next();
-					if(sMore.matches("y")){
-						sTop+=10;
+					if (sMore.matches("y")) {
+						sTop += 10;
 						continue;
-					}
-					else if(sMore.matches("n")) {
+					} else if (sMore.matches("n")) {
 						break;
 					}
 				}
-				}
+			}
 		}
 
 	}
-	
-	public void cat(ArrayList<String> args) {
+
+	public void cat(ArrayList<String> args) throws IOException {
 		String currentPath;
-		for (int i=0; i<args.size(); i++) {
-		try {
-			File fp = new File (args.get(i));
-			if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
-			currentPath = this.path + args.get(i);
+		// ***********************************************************************************
+		if (args.size() > 2) {
+			if (args.get(1).compareTo(">>") == 0) {
+				File fp = new File(args.get(0));
+
+				Scanner freader = new Scanner(new File(path + args.get(0)));
+				FileWriter fileWriter = new FileWriter(path + args.get(2), true);
+				while (freader.hasNext()) {
+					String fdata = freader.next();
+					fileWriter.write(fdata);
+				}
+				freader.close();
+				return;
 			}
-			else {
-				currentPath = args.get(i);
+			if (args.get(1).compareTo(">") == 0) {
+				File fp = new File(args.get(0));
+
+				Scanner freader = new Scanner(new File(path + args.get(0)));
+				FileWriter fileWriter = new FileWriter(path + args.get(2), false);
+				while (freader.hasNext()) {
+					String fdata = freader.next();
+					fileWriter.write(fdata);
+				}
+				freader.close();
+				return;
 			}
-			Scanner freader = new Scanner(new File(currentPath));
-			while (freader.hasNext()) {
-				String fdata = freader.next();
-				System.out.println(fdata);
+			if (args.get(1).matches("|") && args.get(2).matches("more")) {
+				File fp = new File(args.get(0));int numOflines=1,j=0;
+				String Continue;Scanner sc = new Scanner(System.in);
+				Scanner freader = new Scanner(new File(path + args.get(0)));
+				FileWriter fileWriter = new FileWriter(path + args.get(2), false);
+				while (freader.hasNext()) {
+					String fdata = freader.next();
+					System.out.println(fdata);
+					j++;
+					if (j == numOflines * 10) {
+						System.out.println("if you want countinue press y");
+						Continue = sc.nextLine();
+						if (Continue.matches("y")) {
+							numOflines++;
+						} else {
+							break;
+						}
+					}
+				}
+				freader.close();
+				return;
 			}
-			freader.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("file not found");
 		}
+		// ***************************************************************************************
+		for (int i = 0; i < args.size(); i++) {
+			try {
+				File fp = new File(args.get(i));
+				if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
+					currentPath = this.path + args.get(i);
+				} else {
+					currentPath = args.get(i);
+				}
+				Scanner freader = new Scanner(new File(currentPath));
+				while (freader.hasNext()) {
+					String fdata = freader.next();
+					System.out.println(fdata);
+				}
+				freader.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("file not found");
+			}
 		}
 	}
-	
+
 	public void cp(ArrayList<String> args) {
 		String currentPath;
-		//could be changed to copy any number of files into a directory
+		// could be changed to copy any number of files into a directory
 		if (args.size() == 3) {
-			//checking if the last argument is a directory.
-			File fp = new File (args.get(2));
-			
+			// checking if the last argument is a directory.
+			File fp = new File(args.get(2));
+
 			if (!args.get(2).equalsIgnoreCase(fp.getAbsolutePath())) {
-			currentPath = this.path + args.get(2);
-			}
-			else {
+				currentPath = this.path + args.get(2);
+			} else {
 				currentPath = args.get(2);
 			}
-			
+
 			fp = new File(currentPath);
-			
+
 			if (!fp.isDirectory()) {
 				System.out.println("there is no directory with the given name");
 			}
-			
-			else {	
-				for(int i=0 ; i<2; i++) {
-					//if else for long and short paths
+
+			else {
+				for (int i = 0; i < 2; i++) {
+					// if else for long and short paths
 					if (!args.get(2).equalsIgnoreCase(fp.getAbsolutePath())) {
 						currentPath = this.path + args.get(i);
-						}
-						else {
-							currentPath = args.get(i);
-						}
-					
-				File file= new File(currentPath);
-				
-				try {
-					FileUtils.copyFileToDirectory(file, fp);
-				} catch (IOException e) {
-					System.out.println("a file you wrote does not exist");
+					} else {
+						currentPath = args.get(i);
+					}
+
+					File file = new File(currentPath);
+
+					try {
+						FileUtils.copyFileToDirectory(file, fp);
+					} catch (IOException e) {
+						System.out.println("a file you wrote does not exist");
+					}
 				}
-				}
-				
+
 			}
 		}
-		
-		//copying a file onto another file as written in the command in the lab; can be changed to copy several files into one.
-		else if(args.size() == 2) {
-			//checking if the second path provided is to a file and not a directory
-			File fp=new File(args.get(1));
-			
+
+		// copying a file onto another file as written in the command in the lab; can be
+		// changed to copy several files into one.
+		else if (args.size() == 2) {
+			// checking if the second path provided is to a file and not a directory
+			File fp = new File(args.get(1));
+
 			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
-			currentPath = this.path + args.get(1);
-			}
-			else {
+				currentPath = this.path + args.get(1);
+			} else {
 				currentPath = args.get(1);
 			}
-			
+
 			fp = new File(currentPath);
-			
+
 			if (!fp.isFile()) {
 				System.out.println("there is no file with the given name");
 			}
-			
+
 			else {
 				if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
 					currentPath = this.path + args.get(0);
-					}
-					else {
-						currentPath = args.get(0);
-					}
-				
-				File file=new File(currentPath);
-				
+				} else {
+					currentPath = args.get(0);
+				}
+
+				File file = new File(currentPath);
+
 				try {
 					FileUtils.copyFile(file, fp);
 				} catch (IOException e) {
 					System.out.println("a file you entered does not exist");
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
-	public void help() {
-		System.out.println("cd: This command changes the current directory to another one. arguments: directoryname");
-		System.out.println("ls: list names of all files and directories in the current working directory");
-		System.out.println("cp: copies a file's contents into a new file that has been created by it or copies files into a certain directory. arguments: filename filename or filename filename directoryname");
-		System.out.println("cat: concatenates files and outputs their content to the console/anotherfile. arguments: filename(s)");
-		System.out.println("more: lets us display the output line by line or page by page. arguments: filename");
-		System.out.println("mkdir: makes directories of given names in current directory or in a specified path. arguments: directoryname(s) or path(s)/dirname(s)");
-		System.out.println("rmdir: removes directories of given names in current directory or in a specified path. arguments: directoryname(s) or path(s)/dirname(s)");
-		System.out.println("mv: moves each given file into a the last given file with the same name in a specified directory. arguments: filenames/paths");
-		System.out.println("rm: removes each specified file. arrguments: filename(s)");
-		System.out.println("args: list all command arguments");
-		System.out.println("date: current date/time");
-		System.out.println("pwd: shows current working directory");
-		System.out.println("clear: clears the current terminal screen ");
-		System.out.println("exit: Stop all");
+
+	public void help(ArrayList<String> args) throws IOException {
+		String helpMessage = "cd: This command changes the current directory to another one. arguments: directoryname \n"
+				+ " ls: list names of all files and directories in the current working directory\n"
+				+ "cp: copies a file's contents into a new file that has been created by it or copies files into a certain directory. arguments: filename filename or filename filename directoryname"
+				+ "\ncat: concatenates files and outputs their content to the console/anotherfile. arguments: filename(s)"
+				+ "\nmore: lets us display the output line by line or page by page. arguments: filename"
+				+ "\nmkdir: makes directories of given names in current directory or in a specified path. arguments: directoryname(s) or path(s)/dirname(s)"
+				+ "\nrmdir: removes directories of given names in current directory or in a specified path. arguments: directoryname(s) or path(s)/dirname(s)"
+				+ "\nmv: moves each given file into a the last given file with the same name in a specified directory. arguments: filenames/paths"
+				+ "\nrm: removes each specified file. arrguments: filename(s)" + "\nargs: list all command arguments"
+				+ "\ndate: current date/time" + "\npwd: shows current working directory"
+				+ "\nclear: clears the current terminal screen " + "\nexit: Stop all";
+		if (args.isEmpty()) {
+			System.out.println(helpMessage);
+			return;
+		} else if (args.get(0).compareTo(">>") == 0) {
+			FileWriter fileWriter = new FileWriter(path + args.get(1), true);
+			fileWriter.write(helpMessage);
+			return;
+		} else if (args.get(0).compareTo(">") == 0) {
+			FileWriter fileWriter = new FileWriter(path + args.get(1), false);
+			fileWriter.write(helpMessage);
+			return;
+		}
+
 	}
-	
-	public void arrow(String firstParameter,String fileName) throws IOException {
-		if(firstParameter.compareTo("ls")==0) {
-			
+
+	public void rm(ArrayList<String> args) {
+		File file = new File(path + args.get(0));
+
+		if (!file.delete()) {
+			System.out.println(args.get(0) + " does not exist");
 		}
-		else {
-			BufferedReader reader;
-			reader = new BufferedReader(new FileReader(path+firstParameter));
-			FileWriter fileWriter = new FileWriter(path+fileName,true);
-			String line = reader.readLine();
-			while (line != null) {
-				fileWriter.write(line);
-				line = reader.readLine();
-			}
-			reader.close();
-			fileWriter.close();
-		}
-		
-}
-	
-	
-	public void doubleArrow(String firstParameter,String fileName) throws IOException{
-		if(firstParameter.compareTo("ls")==0) {
+
+	}
+
+	public void more(ArrayList<String> args) throws IOException {
+		int numOflines = 1;
+		String Continue;
+		Scanner sc = new Scanner(System.in);
+		if (args.get(0).compareTo("ls") == 0) {
 			String[] files;
-			File file = new File (path);
+			File file = new File(path);
 			files = file.list();
-			Arrays.sort(files,String.CASE_INSENSITIVE_ORDER);
-			FileWriter fileWriter = new FileWriter(path+fileName,false);
-			for (String filenames : files) {	
-				fileWriter.write(filenames);   
+			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
+
+			for (int i = 0; i < files.length; i++) {
+				String filenames = files[i];
+				System.out.println(filenames);
+				if (i == numOflines * 10) {
+					System.out.println("if you want countinue press y");
+					Continue = sc.nextLine();
+					if (Continue.matches("y")) {
+						numOflines++;
+					} else {
+						break;
+					}
+
+				}
 			}
-			fileWriter.close();
-		}
-		else {
-			BufferedReader reader;
-			reader = new BufferedReader(new FileReader(path+firstParameter));
-			FileWriter fileWriter = new FileWriter(path+fileName,false);
-			String line = reader.readLine();
-			while (line != null) {
-				fileWriter.write(line);
-				line = reader.readLine();
+
+		} else if (args.get(0).compareTo("cat") == 0) {
+			String currentPath;
+			for (int i = 0; i < args.size(); i++) {
+				try {
+					File fp = new File(args.get(i));
+					if (!args.get(i).equalsIgnoreCase(fp.getAbsolutePath())) {
+						currentPath = this.path + args.get(i);
+					} else {
+						currentPath = args.get(i);
+					}
+					Scanner freader = new Scanner(new File(currentPath));
+					int j = 0;
+					while (freader.hasNext()) {
+						String fdata = freader.next();
+						System.out.println(fdata);
+						j++;
+						if (j == numOflines * 10) {
+							System.out.println("if you want countinue press y");
+							Continue = sc.nextLine();
+							if (Continue.matches("y")) {
+								numOflines++;
+							} else {
+								break;
+							}
+						}
+					}
+					freader.close();
+				} catch (FileNotFoundException e) {
+					System.out.println("file not found");
+				}
 			}
-			reader.close();
-			fileWriter.close();
 		}
 	}
-	
-	public void rm(String fileName) {
-		File file = new File(fileName); 
-        
-        if(!file.delete()) 
-        { 
-            System.out.println(fileName + " does not exist");
-        } 
-         
-	}
- 
-	public void more() {
-		
-	}
-	
-	public void pipe() {
-		
-	}
-
-} 
-
-
+}
