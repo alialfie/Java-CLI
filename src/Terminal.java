@@ -307,16 +307,19 @@ public class Terminal {
 		String currentPath;
 		// ***********************************************************************************
 		if (args.size() > 2) {
+			String fdata;
 			if (args.get(1).compareTo(">>") == 0) {
 				File fp = new File(args.get(0));
 
 				Scanner freader = new Scanner(new File(path + args.get(0)));
 				FileWriter fileWriter = new FileWriter(path + args.get(2), true);
 				while (freader.hasNext()) {
-					String fdata = freader.next();
+					fdata = freader.next();
 					fileWriter.write(fdata);
+					fileWriter.write("\n");
 				}
 				freader.close();
+				fileWriter.close();
 				return;
 			}
 			if (args.get(1).compareTo(">") == 0) {
@@ -325,19 +328,21 @@ public class Terminal {
 				Scanner freader = new Scanner(new File(path + args.get(0)));
 				FileWriter fileWriter = new FileWriter(path + args.get(2), false);
 				while (freader.hasNext()) {
-					String fdata = freader.next();
+					fdata = freader.next();
 					fileWriter.write(fdata);
+					fileWriter.write("\n");
 				}
 				freader.close();
+				fileWriter.close();
 				return;
 			}
-			if (args.get(1).matches("|") && args.get(2).matches("more")) {
+			if (args.get(1).compareTo("|")==0 && args.get(2).compareTo("more")==0) {
 				File fp = new File(args.get(0));int numOflines=1,j=0;
 				String Continue;Scanner sc = new Scanner(System.in);
 				Scanner freader = new Scanner(new File(path + args.get(0)));
 				FileWriter fileWriter = new FileWriter(path + args.get(2), false);
 				while (freader.hasNext()) {
-					String fdata = freader.next();
+					fdata = freader.next();
 					System.out.println(fdata);
 					j++;
 					if (j == numOflines * 10) {
