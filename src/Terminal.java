@@ -22,6 +22,7 @@ public class Terminal {
 		String cmd;
 		while(true) {
 			cmdLine = sc.nextLine();
+			
 			if(parser.parse(cmdLine)) {
 				cmd = parser.getCmd();
 				
@@ -156,6 +157,49 @@ public class Terminal {
 					}
 				}
 			}
+		}
+	}
+	
+	public void args(ArrayList<String> args) {
+		switch(args.get(0)) {
+		case "cp":
+			System.out.println("sourcePath destinationPath");
+			break;
+			
+		case "cd":
+			System.out.println("[path]");
+			break;
+			
+		case "ls":
+			System.out.println("no arguments");
+			break;
+			
+		case "cat":
+			System.out.println("file [file..]");
+			break;
+			
+		case "more":
+			System.out.println("no argments");
+			break;
+			
+		case "mkdir":
+			System.out.println("directory [directory ...]");
+			break;
+			
+		case "rmdir":
+			System.out.println("directory ...");
+			break;
+			
+		case "mv":
+			System.out.println("source dest");
+			break;
+			
+		case "rm":
+			System.out.println("file ...");
+			break;
+			
+		default:
+			System.out.println("unknown command");
 		}
 	}
 }
