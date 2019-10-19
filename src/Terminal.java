@@ -43,6 +43,9 @@ public class Terminal {
 				case "pwd":
 					pwd(parser.getArgs());
 					break;
+				case "clear":
+					clear();
+					break;
 
 				case "rmdir":
 					rmdir(parser.getArgs());
@@ -550,6 +553,11 @@ public class Terminal {
 					System.out.println("file not found");
 				}
 			}
+		}
+	}
+	public void clear() {
+		for (int i = 0; i < 5000; i++) {
+			System.out.println("\n");
 		}
 	}
 }
