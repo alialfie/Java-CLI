@@ -89,6 +89,10 @@ public class Terminal {
 					rm(parser.getArgs());
 					break;
 					
+				case "clear":
+					clear();
+					break;
+					
 				case "exit":
 					sc.close();
 					return;
@@ -330,11 +334,14 @@ public class Terminal {
 		String currentPath;
 		// ***********************************************************************************
 				if (args.size() > 2) {
+					String fdata;
 					if (args.get(1).compareTo(">>") == 0) {
-						Scanner freader = new Scanner(new File( args.get(0)));
-						FileWriter fileWriter = new FileWriter( args.get(2), true);
+						File fp = new File(args.get(0));
+
+						Scanner freader = new Scanner(new File(path + args.get(0)));
+						FileWriter fileWriter = new FileWriter(path + args.get(2), true);
 						while (freader.hasNext()) {
-							String fdata = freader.next();
+							fdata = freader.next();
 							fileWriter.write(fdata);
 							fileWriter.write("\n");
 						}
@@ -343,13 +350,14 @@ public class Terminal {
 						return;
 					}
 					if (args.get(1).compareTo(">") == 0) {
-						Scanner freader = new Scanner(new File( args.get(0)));
-						FileWriter fileWriter = new FileWriter( args.get(2), false);
+						File fp = new File(args.get(0));
+
+						Scanner freader = new Scanner(new File(path + args.get(0)));
+						FileWriter fileWriter = new FileWriter(path + args.get(2), false);
 						while (freader.hasNext()) {
-							String fdata = freader.next();
+							fdata = freader.next();
 							fileWriter.write(fdata);
 							fileWriter.write("\n");
-							fileWriter.close();
 						}
 						freader.close();
 						fileWriter.close();
@@ -361,7 +369,7 @@ public class Terminal {
 						Scanner freader = new Scanner(new File( args.get(0)));
 						FileWriter fileWriter = new FileWriter( args.get(2), false);
 						while (freader.hasNext()) {
-							String fdata = freader.next();
+							fdata = freader.next();
 							System.out.println(fdata);
 							j++;
 							if (j == numOflines * 10) {
@@ -624,5 +632,10 @@ public class Terminal {
 		}
 	}
 
+	public void clear() {
+		for (int i = 0; i < 5000; i++) {
+			System.out.println("\n");
+		}
+	}
 	
 } 

@@ -25,6 +25,7 @@ public class Parser {
 				add(new Command("more",1, 2));
 				add(new Command("help", 0, 2));
 				add(new Command("exit", 0, 0));
+				add(new Command("clear", 0, 0));
 			}
 		};
 	}
