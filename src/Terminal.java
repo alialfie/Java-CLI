@@ -132,11 +132,25 @@ public class Terminal {
 			return;
 		}
 		else if (args.get(0).compareTo(">>") == 0) {
-			FileWriter fileWriter = new FileWriter(args.get(1), true);
+			File fp = new File(args.get(1));
+			FileWriter fileWriter;
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), true);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), true);
+				}
 			fileWriter.write(path);
 			fileWriter.close();
 		} else if(args.get(0).compareTo(">") == 0){
-			FileWriter fileWriter = new FileWriter(args.get(1), false);
+			File fp = new File(args.get(1));
+			FileWriter fileWriter;
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), false);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), false);
+				}
 			fileWriter.write(path);
 			fileWriter.close();
 		}
@@ -234,12 +248,26 @@ public class Terminal {
 			System.out.println(aDate.format(date));
 		}
 		else if (args.get(0).compareTo(">>") == 0) {
-			FileWriter fileWriter = new FileWriter(args.get(1), true);
+			File fp = new File(args.get(1));
+			FileWriter fileWriter;
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), true);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), true);
+				}
 			fileWriter.write(aDate.format(date));
 			fileWriter.close();
 			return;
 		} else if (args.get(0).compareTo(">") == 0) {
-			FileWriter fileWriter = new FileWriter(args.get(1), true);
+			File fp = new File(args.get(1));
+			FileWriter fileWriter;
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), false);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), false);
+				}
 			fileWriter.write(aDate.format(date));
 			fileWriter.close();
 			return;
@@ -279,8 +307,15 @@ public class Terminal {
 			String[] files;
 			File file = new File(path);
 			files = file.list();
+			File fp = new File(args.get(1));
+			FileWriter fileWriter;
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), true);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), true);
+				}
 			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
-			FileWriter fileWriter = new FileWriter(args.get(1), true);
 			for (String filenames : files) {
 				fileWriter.write(filenames);
 				fileWriter.write("\n");
@@ -292,8 +327,15 @@ public class Terminal {
 			String[] files;
 			File file = new File(path);
 			files = file.list();
+			File fp = new File(args.get(1));
+			FileWriter fileWriter;
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), false);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), false);
+				}
 			Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
-			FileWriter fileWriter = new FileWriter(args.get(1), false);
 			for (String filenames : files) {
 				fileWriter.write(filenames);
 				fileWriter.write("\n");
@@ -337,9 +379,17 @@ public class Terminal {
 					String fdata;
 					if (args.get(1).compareTo(">>") == 0) {
 						File fp = new File(args.get(0));
+						Scanner freader;
+						FileWriter fileWriter;
+						if (!args.get(0).equalsIgnoreCase(fp.getAbsolutePath())) {
+							freader = new Scanner(new File(path + args.get(0)));
+							fileWriter = new FileWriter(path + args.get(2), true);
+							}
+							else {
+							freader = new Scanner(new File(args.get(0)));
+							fileWriter = new FileWriter(args.get(2), true);
+							}
 
-						Scanner freader = new Scanner(new File(path + args.get(0)));
-						FileWriter fileWriter = new FileWriter(path + args.get(2), true);
 						while (freader.hasNext()) {
 							fdata = freader.next();
 							fileWriter.write(fdata);
@@ -351,9 +401,17 @@ public class Terminal {
 					}
 					if (args.get(1).compareTo(">") == 0) {
 						File fp = new File(args.get(0));
+						Scanner freader;
+						FileWriter fileWriter;
+						if (!args.get(0).equalsIgnoreCase(fp.getAbsolutePath())) {
+							freader = new Scanner(new File(path + args.get(0)));
+							fileWriter = new FileWriter(path + args.get(2), false);
+							}
+							else {
+							freader = new Scanner(new File(args.get(0)));
+							fileWriter = new FileWriter(args.get(2), false);
+							}
 
-						Scanner freader = new Scanner(new File(path + args.get(0)));
-						FileWriter fileWriter = new FileWriter(path + args.get(2), false);
 						while (freader.hasNext()) {
 							fdata = freader.next();
 							fileWriter.write(fdata);
@@ -366,8 +424,15 @@ public class Terminal {
 					if (args.get(1).compareTo("|") == 0 && args.get(2).compareTo("more") == 0) {
 						File fp = new File(args.get(0));int numOflines=1,j=0;
 						String Continue;Scanner sc = new Scanner(System.in);
-						Scanner freader = new Scanner(new File( args.get(0)));
-						FileWriter fileWriter = new FileWriter( args.get(2), false);
+						Scanner freader;
+						
+						if (!args.get(0).equalsIgnoreCase(fp.getAbsolutePath())) {
+							freader = new Scanner(new File(path + args.get(0)));
+							}
+							else {
+							freader = new Scanner(new File(args.get(0)));
+							}
+						
 						while (freader.hasNext()) {
 							fdata = freader.next();
 							System.out.println(fdata);
@@ -506,13 +571,32 @@ public class Terminal {
 		if (args.isEmpty()) {
 			System.out.println(helpMessage);
 			return;
-		} else if (args.get(0).compareTo(">>") == 0) {
-			FileWriter fileWriter = new FileWriter(args.get(1), true);
+		}
+		
+		else if (args.get(0).compareTo(">>") == 0) {
+			FileWriter fileWriter;
+			File fp=new File(args.get(1));
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), true);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), true);
+				}
+
 			fileWriter.write(helpMessage);
 			fileWriter.close();
 			return;
-		} else if (args.get(0).compareTo(">") == 0) {
-			FileWriter fileWriter = new FileWriter(args.get(1), false);
+		}
+		
+		else if (args.get(0).compareTo(">") == 0) {
+			FileWriter fileWriter;
+			File fp=new File(args.get(1));
+			if (!args.get(1).equalsIgnoreCase(fp.getAbsolutePath())) {
+				fileWriter = new FileWriter(path + args.get(1), false);
+				}
+				else {
+				fileWriter = new FileWriter(args.get(1), false);
+				}
 			fileWriter.write(helpMessage);
 			fileWriter.close();
 			return;
